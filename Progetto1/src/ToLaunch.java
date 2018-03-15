@@ -212,6 +212,7 @@ public class ToLaunch {
 				
 				iterN+=1;
 				
+				boolean found = false;
 				
 				for(j=0; j<n_providers; j++) {
 					for(int n = 0; n < providers[j].n_regions; n++) {
@@ -223,6 +224,9 @@ public class ToLaunch {
 						
 						int ml = providers[j].regions[n].latencyWithCountry[projects[i].countryIndex];
 						if(ml<minLat) {
+							
+							found = true;
+							
 							minLat = ml;
 							minIndexProv = j;
 							minIndexReg = n;
@@ -232,6 +236,10 @@ public class ToLaunch {
 						
 					}
 				}
+				
+				if(found == false) {
+					break;
+				}
 
 				
 				//take resources from provider and region minIndexProv and minIndexReg
@@ -239,6 +247,11 @@ public class ToLaunch {
 				while(true) {
 					
 					packetsToBuy += 1;
+					providers[minIndexProv].regions[minIndexReg].n_serviceunit-=1;
+					
+					//System.err.println(providers[minIndexProv].regions[minIndexReg].n_serviceunit);
+					
+					
 					boolean toContinue = false;
 					for(j=0; j<n_services; j++) {
 						projects[i].unitNeededAllocated[j] += providers[minIndexProv].regions[minIndexReg].unitsNumber[j];
@@ -253,6 +266,9 @@ public class ToLaunch {
 					
 					}
 
+					if(providers[minIndexProv].regions[minIndexReg].n_serviceunit <= 0) {
+						toContinue=false;
+					}
 					
 					if(toContinue == false) {
 						ProjectEnd pp = a.new ProjectEnd();
