@@ -23,16 +23,31 @@ public class ToLaunch {
 	}
 	
 	
+	private class ProjectEnd {
+		public ProjectEnd() {
+			
+			
+		}
+		
+		int providerId;
+		int regionId;
+		int numberTaken;
+		
+	}
+	
 	private class Project {
 		
 		public Project() {
-			
+			allocHistory = new ArrayList<ToLaunch.ProjectEnd>();
 		}
 		
 		int penalty;
 		String country;
+		int countryIndex;
 		int[] unitNeeded;
-		
+
+		int[] unitNeededAllocated;
+		List<ProjectEnd> allocHistory;
 	}
 
 	
@@ -150,19 +165,171 @@ public class ToLaunch {
 			projects[i].penalty = in.nextInt();
 			projects[i].country = in.next();
 			
+			for(int h = 0; h<n_countries; h++) {
+				if(countriesNames[h].equals(projects[i].country)) {
+					projects[i].countryIndex = h;
+					break;
+				}
+			}
+			
+			
+			
+			
 			projects[i].unitNeeded = new int[n_services];
+			projects[i].unitNeededAllocated = new int[n_services];
+
 			for(j=0; j<n_services; j++) {
 				
 				projects[i].unitNeeded[j] = in.nextInt();
+				projects[i].unitNeededAllocated[j] = 0;
+				
 			}
 			
 		}
 
 		
 	
+	//FINE IMPORT
+		
+		for(i = 0; i<n_projects; i++) {
+			
+
+			
+			int[][] toSkip = new int[n_providers][];
+			for(int gg = 0; gg<n_providers; gg++) {
+				toSkip[gg] = new int[providers[gg].n_regions];
+				for(int ggi = 0; ggi < providers[gg].n_regions; ggi++)
+					toSkip[gg][ggi] = 0;
+			}
+			
+			int iterN = 0;
+			
+			while(true) {
+				
+				int minLat = Integer.MAX_VALUE;
+				int minIndexProv = 0;
+				int minIndexReg = 0;
+				
+				iterN+=1;
+				
+				
+				for(j=0; j<n_providers; j++) {
+					for(int n = 0; n < providers[j].n_regions; n++) {
+						
+						
+						
+						if(toSkip[j][n] == 1)
+							continue;
+						
+						int ml = providers[j].regions[n].latencyWithCountry[projects[i].countryIndex];
+						if(ml<minLat) {
+							minLat = ml;
+							minIndexProv = j;
+							minIndexReg = n;
+							
+
+						}
+						
+					}
+				}
+
+				
+				//take resources from provider and region minIndexProv and minIndexReg
+				int packetsToBuy = 0;
+				while(true) {
+					
+					packetsToBuy += 1;
+					boolean toContinue = false;
+					for(j=0; j<n_services; j++) {
+						projects[i].unitNeededAllocated[j] += providers[minIndexProv].regions[minIndexReg].unitsNumber[j];
+						
+
+						
+						if(providers[minIndexProv].regions[minIndexReg].unitsNumber[j] > 0) {
+							if(projects[i].unitNeededAllocated[j] < projects[i].unitNeeded[j]) {
+								toContinue = true;
+							}
+						}
+					
+					}
+
+					
+					if(toContinue == false) {
+						ProjectEnd pp = a.new ProjectEnd();
+						pp.numberTaken = packetsToBuy;
+						pp.providerId = minIndexProv;
+						pp.regionId = minIndexReg;
+						projects[i].allocHistory.add(pp);
+					
+						toSkip[minIndexProv][minIndexReg] = 1;
+						
+						break;
+					}
+					
+					
+				}
+				
+				
+				boolean toContinueA = false;
+				for(int yy = 0; yy<n_services; yy++) {
+					if(projects[i].unitNeededAllocated[yy] < projects[i].unitNeeded[yy]) {
+						toContinueA = true;
+					}					
+				}
+				
+				if(toContinueA == false) {
+					break;
+				}
+
+				
+				
+			
+			}
+			
+
+		}
+		
+		
+		
+		
+		
+		
+		//writedata
+		
+		try{
+		    PrintWriter writer = new PrintWriter("output.txt", "UTF-8");
+		    
+		    for(int b = 0; b<n_projects; b++) {
+		    	for(int gg = 0; gg<projects[b].allocHistory.size(); gg++) {
+				    writer.print(projects[b].allocHistory.get(gg).providerId+" ");
+				    writer.print(projects[b].allocHistory.get(gg).regionId+" ");
+				    writer.print(projects[b].allocHistory.get(gg).numberTaken+" ");
+
+		    	}
+		    	writer.println();
+		    	
+		    }
+
+		    writer.close();
+
+		    
+		    
+			
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
+		
+		
 		
 		
 	}
+	
 		/*
 		
 		//fine import!!
