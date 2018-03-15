@@ -311,6 +311,8 @@ public class ToLaunch {
 
 
 		    	}
+		    	
+		    	if(b != n_projects-1)
 		    	writer.println();
 		    	
 		    }
