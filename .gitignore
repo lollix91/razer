@@ -1,0 +1,17 @@
+# Eclipse Projects Files
+.settings
+.classpath
+.project
+# Target Folder
+target/
+core/target
+server/target
+# Bin Folder
+bin/
+# Logs Folder
+logs/
+# Other folders
+.metadata
+.recommenders
+.sonar
+Servers
