@@ -303,7 +303,12 @@ public class ToLaunch {
 		    	for(int gg = 0; gg<projects[b].allocHistory.size(); gg++) {
 				    writer.print(projects[b].allocHistory.get(gg).providerId+" ");
 				    writer.print(projects[b].allocHistory.get(gg).regionId+" ");
-				    writer.print(projects[b].allocHistory.get(gg).numberTaken+" ");
+
+				    if(gg == projects[b].allocHistory.size()-1)
+				    	writer.print(projects[b].allocHistory.get(gg).numberTaken);
+				    else
+					    writer.print(projects[b].allocHistory.get(gg).numberTaken+" ");
+
 
 		    	}
 		    	writer.println();
