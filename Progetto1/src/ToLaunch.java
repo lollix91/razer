@@ -22,21 +22,63 @@ public class ToLaunch {
 		
 	}
 	
-	static Scanner in;
-	static int n_videos;
-	static int n_endpoints;
-	static int n_request;
-	static int n_caches;
-	static int caches_size;
 	
-	static int videos_size[];
-	static int datacenter_latency[];
-	static int endpoint_caches_latency[][];
-	static int endpoint_videos_request[][];
+	private class Project {
+		
+		public Project() {
+			
+		}
+		
+		int penalty;
+		String country;
+		int[] unitNeeded;
+		
+	}
+
+	
+	private class Provider {
+		
+		public Provider() {
+			
+		}
+		
+		String name;
+		int n_regions;
+		Region[] regions;
+		
+	}
+	
+	private class Region {
+		
+		public Region() {
+			
+		}
+		
+		String name;
+		int n_serviceunit;
+		float packageCost;
+		int[] unitsNumber;	
+		int[] latencyWithCountry;
+		
+	}
+	
+	static Scanner in;
+	static int n_providers;
+	static int n_services;
+	static int n_countries;
+	static int n_projects;
+	
+	static String[] serviceNames;
+	static String[] countriesNames;
+	
+	static Provider[] providers;
+	static Project[] projects;
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		 
-		in = new Scanner(new FileReader("trending_today.in"));
+		ToLaunch a = new ToLaunch();
+		
+		in = new Scanner(new FileReader("first_adventure.in"));
 		int i=0;
 		int j=0;
 		int z=0;
@@ -44,51 +86,84 @@ public class ToLaunch {
 		while (in.hasNext()) { 
 			
 			if(i==0)
-				n_videos=in.nextInt();
+				n_providers=in.nextInt();
 			else if(i==1)
-				n_endpoints=in.nextInt();				
+				n_services=in.nextInt();				
 			else if(i==2)
-				n_request=in.nextInt();				
+				n_countries=in.nextInt();				
 			else if(i==3)
-				n_caches=in.nextInt();				
+				n_projects=in.nextInt();				
 			else if(i==4) {
-				caches_size=in.nextInt();
 				break;
 			}
 				
 			i++;
 		}
 		
-		videos_size=new int[n_videos];
+		serviceNames = new String[n_services];
+		for(i=0; i<n_services; i++)
+			serviceNames[i] = in.next();
 		
-		for(i=0; i<n_videos; i++)
-			videos_size[i]=in.nextInt();
-
-		datacenter_latency=new int[n_endpoints];
-		endpoint_caches_latency=new int[n_endpoints][n_caches];
+		countriesNames = new String[n_countries];
+		for(i=0; i<n_countries; i++)
+			countriesNames[i] = in.next();
 		
-		for(i=0; i<n_endpoints; i++) {
-			datacenter_latency[i]=in.nextInt();
+		providers = new Provider[n_providers];
+		//scans the providers! main loop
+		for(i=0; i<n_providers; i++) {
+			providers[i] = a.new Provider();
+					
+			providers[i].name = in.next();
+			providers[i].n_regions = in.nextInt();
 			
-			int temp1=in.nextInt();
+			providers[i].regions = new Region[providers[i].n_regions];
 			
-			for(j=0; j<temp1; j++) {
-				endpoint_caches_latency[i][in.nextInt()]=in.nextInt();
+			for(j=0; j<providers[i].n_regions; j++) {
+				
+				providers[i].regions[j] = a.new Region();
+				
+				providers[i].regions[j].name = in.next();
+				providers[i].regions[j].n_serviceunit = in.nextInt();
+				providers[i].regions[j].packageCost = Float.parseFloat(in.next());
+				
+				providers[i].regions[j].unitsNumber = new int[n_services];
+				for(z=0; z<n_services; z++) {
+					providers[i].regions[j].unitsNumber[z] = in.nextInt();
+				}
+				
+				providers[i].regions[j].latencyWithCountry = new int[n_countries];
+				for(z=0; z<n_countries; z++) {
+					providers[i].regions[j].latencyWithCountry[z] = in.nextInt();
+					
+				}
+				
 			}
+			
+			
+		}
+		
+		projects = new Project[n_projects];
+		for(i=0; i<n_projects; i++) {
+			
+			projects[i] = a.new Project();
+			
+			projects[i].penalty = in.nextInt();
+			projects[i].country = in.next();
+			
+			projects[i].unitNeeded = new int[n_services];
+			for(j=0; j<n_services; j++) {
+				
+				projects[i].unitNeeded[j] = in.nextInt();
+			}
+			
+		}
 
-			
-		}
 		
-		endpoint_videos_request=new int[n_endpoints][n_videos];
-		
-		for(i=0; i<n_request; i++) {
-			int temp1=in.nextInt();
-			endpoint_videos_request[in.nextInt()][temp1]=in.nextInt();
-			
-		}
+	
 		
 		
-		
+	}
+		/*
 		
 		//fine import!!
 		
@@ -199,7 +274,7 @@ public class ToLaunch {
 	}
 	
 	
-	
+	*/
 
 
 	
